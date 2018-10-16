@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #### Jack Morrison
 #### Hamiltonian Path Finding for Sequence Reconstruction
 
@@ -55,8 +57,9 @@ def SearchTree(graph, path, verticesLeft):
 def main():
 
     ## Two sets of input k-mers
-    kmers = ['ACA','ATT','CAT','CTG','CTT','GCT','TCT','TGA','TGC','TTC','TTG','TTT']
-    #kmers = ['ATG', 'TGG', 'TGC', 'GTG', 'GGC', 'GCA', 'GCG', 'CGT']
+    #kmers = ['ACA','ATT','CAT','CTG','CTT','GCT','TCT','TGA','TGC','TTC','TTG','TTT']
+    kmers = ['ATG', 'TGG', 'TGC', 'GTG', 'GGC', 'GCA', 'GCG', 'CGT']
+    #kmers = ['ATG', 'ATG']
 
     print("\n ==> Input k-mers:\n    ", kmers)
 
@@ -64,24 +67,29 @@ def main():
     print("\n ==> Graph Structure (Adjacency List):\n    ", graph)
 
     BFstart = time.time()
-    hampath = list(findHamiltonianPathBF(graph, len(kmers)))
+    hampathBF = list(findHamiltonianPathBF(graph, len(kmers)))
     BFend = time.time()
-    print("\n ==> (Brute Force) The resulting Hamiltonian Path is:\n    ", hampath)
-    print("\n   ==> elapsed time: ", float(BFend - BFstart), " seconds")
 
     BBstart = time.time()
-    path = findHamiltonianPathBB(graph, len(kmers))
+    hampathBB = findHamiltonianPathBB(graph, len(kmers))
     BBend = time.time()
-    print("\n ==> (Branch & Bound) The resulting Hamiltonian Path is:\n    ", result)
-    print("\n   ==> elapsed time: ", float(BBend - BBstart), " seconds")
 
-    DNAseq = ""
-    for i in result:
-        if len(DNAseq) == 0:
-            DNAseq += kmers[i]
-        else:
-            DNAseq += kmers[i][-1]
+    if ((len(hampathBF) > 0) and (len(hampathBB) > 0)):
+        print("\n ==> (Brute Force) The resulting Hamiltonian Path is:", hampathBF)
+        print("\n =====> elapsed time: ", float(BFend - BFstart), " seconds")
+        print("\n ==> (Branch & Bound) The resulting Hamiltonian Path is:", hampathBB)
+        print("\n =====> elapsed time: ", float(BBend - BBstart), " seconds")
 
-    print("\n ==> The reconstructed DNA fragment is: ", DNAseq , "\n")
+        DNAseq = ""
+        for i in hampathBB:
+            if len(DNAseq) == 0:
+                DNAseq += kmers[i]
+            else:
+                DNAseq += kmers[i][-1]
+        print("\n ==> The reconstructed DNA fragment is: ", DNAseq , "\n")
+
+    else:
+        print("\n No Hamiltonian Path found. Cannot reconstruct fragment. \n")
+
 
 main()
